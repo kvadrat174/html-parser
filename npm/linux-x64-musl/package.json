@@ -1,5 +1,5 @@
 {
-  "name": "@kvadrat74/html-parser-linux-x64-gnu",
+  "name": "@kvadrat74/html-parser-linux-x64-musl",
   "version": "0.0.0",
   "os": [
     "linux"
@@ -7,15 +7,15 @@
   "cpu": [
     "x64"
   ],
-  "main": "html-parser.linux-x64-gnu.node",
+  "main": "html-parser.linux-x64-musl.node",
   "files": [
-    "html-parser.linux-x64-gnu.node"
+    "html-parser.linux-x64-musl.node"
   ],
   "license": "MIT",
   "engines": {
     "node": ">= 10"
   },
   "libc": [
-    "glibc"
+    "musl"
   ]
 }

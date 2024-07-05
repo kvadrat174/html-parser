@@ -1,15 +1,15 @@
 {
-  "name": "@kvadrat74/html-parser-linux-x64-gnu",
+  "name": "@kvadrat74/html-parser-linux-riscv64-gnu",
   "version": "0.0.0",
   "os": [
     "linux"
   ],
   "cpu": [
-    "x64"
+    "riscv64"
   ],
-  "main": "html-parser.linux-x64-gnu.node",
+  "main": "html-parser.linux-riscv64-gnu.node",
   "files": [
-    "html-parser.linux-x64-gnu.node"
+    "html-parser.linux-riscv64-gnu.node"
   ],
   "license": "MIT",
   "engines": {

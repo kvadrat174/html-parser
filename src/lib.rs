@@ -10,11 +10,6 @@ use std::str;
 #[macro_use]
 extern crate napi_derive;
 
-#[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-  a + b
-}
-
 #[napi(object)]
 pub struct ReplacedLink {
     pub href: String,
@@ -190,9 +185,3 @@ fn replace_tokens(link: &str, replacements: &HashMap<String, String>) -> String 
     }
     result
 }
-
-
-
-
-
-
