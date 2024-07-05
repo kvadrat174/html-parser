@@ -1,6 +1,6 @@
 {
   "name": "@kvadrat74/html-parser",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
@@ -29,8 +29,8 @@
   },
   "packageManager": "yarn@4.3.1",
   "optionalDependencies": {
-    "@kvadrat74/html-parser-win32-x64-msvc": "0.2.0",
-    "@kvadrat74/html-parser-darwin-x64": "0.2.0",
-    "@kvadrat74/html-parser-linux-x64-gnu": "0.2.0"
+    "@kvadrat74/html-parser-win32-x64-msvc": "0.2.1",
+    "@kvadrat74/html-parser-darwin-x64": "0.2.1",
+    "@kvadrat74/html-parser-linux-x64-gnu": "0.2.1"
   }
 }
