@@ -7,6 +7,9 @@
   "cpu": [
     "x64"
   ],
+  "repository": {
+    "url": "https://github.com/kvadrat174/html-parser"
+  },
   "main": "html-parser.darwin-x64.node",
   "files": [
     "html-parser.darwin-x64.node"
