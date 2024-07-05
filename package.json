@@ -7,6 +7,13 @@
     "name": "html-parser",
     "triples": {}
   },
+  "repository": {
+    "url": "https://github.com/kvadrat174/html-parser"
+  },
+  "author": {
+    "name": "a.osokin",
+    "email": "andrey.osokin74@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
