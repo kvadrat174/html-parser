@@ -1,5 +1,5 @@
 use bindgen_prelude::Buffer;
-use napi::{bindgen_prelude::Object, *};
+use napi::{*};
 use std::collections::HashMap;
 use scraper::{Html, Selector};
 use kuchiki::traits::*;
