@@ -310,9 +310,10 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { replaceHandlebarsTokens, findAllHrefs, findHandlebarsTokens, addPreHeaderAndLinks } = nativeBinding
+const { replaceHandlebarsTokens, findAllHrefs, findHandlebarsTokens, addPreHeader, addPreHeaderAndLinks } = nativeBinding
 
 module.exports.replaceHandlebarsTokens = replaceHandlebarsTokens
 module.exports.findAllHrefs = findAllHrefs
 module.exports.findHandlebarsTokens = findHandlebarsTokens
+module.exports.addPreHeader = addPreHeader
 module.exports.addPreHeaderAndLinks = addPreHeaderAndLinks

@@ -59,7 +59,7 @@ pub fn replace_handlebars_tokens(buffer: Buffer, user: Option<ReplacedUser>) -> 
 }
 
 #[napi]
-pub fn find_all_hrefs(buffer: Buffer) -> Result<Vec<String>> {
+pub fn find_all_hrefs(buffer: Buffer, excluded: Option<Vec<String>>) -> Result<Vec<String>> {
     let html_content = String::from_utf8(buffer.to_vec())
         .map_err(|e| napi::Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
 
@@ -68,19 +68,27 @@ pub fn find_all_hrefs(buffer: Buffer) -> Result<Vec<String>> {
     // Create a selector for <a> tags
     let selector = Selector::parse("a").map_err(|e| napi::Error::from_reason(format!("Failed to create selector: {:?}", e)))?;
 
+    // Unwrap the excluded option or create an empty vector if none
+    let excluded = excluded.unwrap_or_else(Vec::new);
+
+    // Use a HashSet to store unique hrefs
+    let mut hrefs_set = std::collections::HashSet::new();
+
     // Find all <a> tags and extract href attributes
-    let mut hrefs = Vec::new();
     for element in document.select(&selector) {
         if let Some(href) = element.value().attr("href") {
-            hrefs.push(href.to_string());
+            if !excluded.contains(&href.to_string()) {
+                hrefs_set.insert(href.to_string());
+            }
         }
     }
+    let hrefs: Vec<String> = hrefs_set.into_iter().collect();
 
     Ok(hrefs)
 }
 
 #[napi]
-pub fn find_handlebars_tokens(buffer: Buffer, user_id: Option<String>) -> Result<Vec<String>> {
+pub fn find_handlebars_tokens(buffer: Buffer) -> Result<Vec<String>> {
     // Convert buffer to string
     let html_content = String::from_utf8(buffer.to_vec())
         .map_err(|e| {
@@ -97,6 +105,30 @@ pub fn find_handlebars_tokens(buffer: Buffer, user_id: Option<String>) -> Result
     }
 
     Ok(tokens)
+}
+
+#[napi]
+pub fn add_pre_header(
+    buffer: Buffer,
+    header: String,
+) -> Result<Buffer> {
+    let html_content = String::from_utf8(buffer.to_vec())
+        .map_err(|e| napi::Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
+    
+    // Parse the HTML content
+    let document = parse_html().one(html_content);
+
+    let pre_header = format!(
+      "<div style=\"font-size:0px;line-height:1px;mso-line-height-rule:exactly;display:none;max-width:0px;max-height:0px;opacity:0;overflow:hidden;mso-hide:all;\">{}</div>",
+      header
+  );
+  let pre_header_node = parse_html().one(pre_header).select_first("div").unwrap();
+  if let Some(body) = document.select_first("body").ok() {
+    body.as_node().insert_before(pre_header_node.as_node().clone());
+  }
+
+    let result_html = document.to_string();
+    Ok(Buffer::from(result_html.as_bytes()))
 }
 
 #[napi]
@@ -171,7 +203,7 @@ pub fn add_pre_header_and_links(
 }
 
 fn includes_string_tokens(link: &str) -> bool {
-    let mail_replacements = vec!["userId"]; // Add other tokens if needed
+    let mail_replacements = vec!["userId"];
     let regex_str = format!(r"\{{\{{({})\}}\}}", mail_replacements.join("|"));
     let regex = Regex::new(&regex_str).unwrap();
     regex.is_match(link)
