@@ -1,6 +1,6 @@
 {
   "name": "@kvadrat74/html-parser",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "types": "index.d.ts",
   "napi": {
@@ -11,6 +11,11 @@
       ]
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
+  },
+  "author": "Andrey Osokin <andrey.osokin74@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
