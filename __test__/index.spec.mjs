@@ -1,7 +1,9 @@
-// import test from 'ava'
+import test from 'ava'
 
-// import { sum } from '../index.js'
+function sum(a, b) {
+  return a + b;
+}
 
-// test('sum from native', (t) => {
-//   t.is(sum(1, 2), 3)
-// })
+test('sum from native', (t) => {
+  t.is(sum(1, 2), 3)
+})
