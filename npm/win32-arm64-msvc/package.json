@@ -1,6 +1,6 @@
 {
   "name": "@kvadrat74/html-parser-win32-arm64-msvc",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "os": [
     "win32"
   ],
