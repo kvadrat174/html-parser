@@ -6,7 +6,6 @@
   "napi": {
     "name": "html-parser",
     "triples": {
-      "defaults": false,
       "additional": [
         "aarch64-apple-darwin",
         "aarch64-linux-android",
@@ -15,10 +14,13 @@
         "aarch64-pc-windows-msvc",
         "armv7-unknown-linux-gnueabihf",
         "armv7-unknown-linux-musleabihf",
+        "x86_64-unknown-linux-musl",
+        "i686-pc-windows-msvc",
         "x86_64-apple-darwin",
         "x86_64-pc-windows-msvc",
         "armv7-linux-androideabi",
-        "universal-apple-darwin"
+        "universal-apple-darwin",
+        "riscv64gc-unknown-linux-gnu"
       ]
     }
   },
