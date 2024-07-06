@@ -1,6 +1,6 @@
 {
   "name": "@kvadrat74/html-parser-win32-x64-msvc",
-  "version": "0.2.9",
+  "version": "0.0.0",
   "os": [
     "win32"
   ],
@@ -11,9 +11,6 @@
   "files": [
     "html-parser.win32-x64-msvc.node"
   ],
-  "repository": {
-    "url": "https://github.com/kvadrat174/html-parser"
-  },
   "license": "MIT",
   "engines": {
     "node": ">= 10"

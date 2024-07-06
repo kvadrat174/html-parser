@@ -5,43 +5,12 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@kvadrat74/html-parser-darwin-x64@npm:0.2.7":
-  version: 0.2.7
-  resolution: "@kvadrat74/html-parser-darwin-x64@npm:0.2.7"
-  conditions: os=darwin & cpu=x64
-  languageName: node
-  linkType: hard
-
-"@kvadrat74/html-parser-linux-x64-gnu@npm:0.2.7":
-  version: 0.2.7
-  resolution: "@kvadrat74/html-parser-linux-x64-gnu@npm:0.2.7"
-  conditions: os=linux & cpu=x64 & libc=glibc
-  languageName: node
-  linkType: hard
-
-"@kvadrat74/html-parser-win32-x64-msvc@npm:0.2.7":
-  version: 0.2.7
-  resolution: "@kvadrat74/html-parser-win32-x64-msvc@npm:0.2.7"
-  conditions: os=win32 & cpu=x64
-  languageName: node
-  linkType: hard
-
 "@kvadrat74/html-parser@workspace:.":
   version: 0.0.0-use.local
   resolution: "@kvadrat74/html-parser@workspace:."
   dependencies:
-    "@kvadrat74/html-parser-darwin-x64": "npm:0.2.7"
-    "@kvadrat74/html-parser-linux-x64-gnu": "npm:0.2.7"
-    "@kvadrat74/html-parser-win32-x64-msvc": "npm:0.2.7"
     "@napi-rs/cli": "npm:^2.18.4"
     ava: "npm:^6.0.1"
-  dependenciesMeta:
-    "@kvadrat74/html-parser-darwin-x64":
-      optional: true
-    "@kvadrat74/html-parser-linux-x64-gnu":
-      optional: true
-    "@kvadrat74/html-parser-win32-x64-msvc":
-      optional: true
   languageName: unknown
   linkType: soft
 
