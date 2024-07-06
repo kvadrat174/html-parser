@@ -8,7 +8,7 @@
     "triples": {}
   },
   "repository": {
-    "url": "https://github.com/kvadrat174/html-parser"
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
   },
   "author": {
     "name": "a.osokin",
