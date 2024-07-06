@@ -36,8 +36,8 @@
   },
   "packageManager": "yarn@4.3.1",
   "optionalDependencies": {
-    "@kvadrat74/html-parser-win32-x64-msvc": "0.2.8",
-    "@kvadrat74/html-parser-darwin-x64": "0.2.8",
-    "@kvadrat74/html-parser-linux-x64-gnu": "0.2.8"
+    "@kvadrat74/html-parser-darwin-x64": "0.2.7",
+    "@kvadrat74/html-parser-linux-x64-gnu": "0.2.7",
+    "@kvadrat74/html-parser-win32-x64-msvc": "0.2.7"
   }
 }
