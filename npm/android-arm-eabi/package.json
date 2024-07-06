@@ -7,6 +7,9 @@
   "cpu": [
     "arm"
   ],
+  "repository": {
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
+  },
   "main": "html-parser.android-arm-eabi.node",
   "files": [
     "html-parser.android-arm-eabi.node"

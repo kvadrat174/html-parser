@@ -11,6 +11,9 @@
   "files": [
     "html-parser.linux-arm64-gnu.node"
   ],
+  "repository": {
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 10"

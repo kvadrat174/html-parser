@@ -22,6 +22,13 @@
       ]
     }
   },
+  "repository": {
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
+  },
+  "author": {
+    "name": "a.osokin",
+    "email": "andrey.osokin74@gmail.com"
+  },
   "license": "MIT",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",

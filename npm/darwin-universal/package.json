@@ -8,6 +8,9 @@
   "files": [
     "html-parser.darwin-universal.node"
   ],
+  "repository": {
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 10"

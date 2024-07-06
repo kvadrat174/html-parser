@@ -12,7 +12,7 @@
     "html-parser.linux-x64-gnu.node"
   ],
   "repository": {
-    "url": "https://github.com/kvadrat174/html-parser"
+    "url": "git+https://github.com/kvadrat174/html-parser.git"
   },
   "license": "MIT",
   "engines": {
