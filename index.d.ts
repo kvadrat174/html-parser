@@ -11,7 +11,7 @@ export interface ReplacedUser {
   name?: string
   surname?: string
 }
-export declare function replaceHandlebarsTokens(buffer: Buffer, user?: ReplacedUser | undefined | null): Buffer
+export declare function replaceHandlebarsTokens(buffer: Buffer, data?: any | undefined | null): Buffer
 export declare function findAllHrefs(buffer: Buffer, excluded?: Array<string> | undefined | null): Array<string>
 export declare function findHandlebarsTokens(buffer: Buffer): Array<string>
 export declare function addPreHeader(buffer: Buffer, header: string): Buffer

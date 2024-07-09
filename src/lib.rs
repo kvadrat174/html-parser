@@ -1,6 +1,7 @@
 use bindgen_prelude::Buffer;
 use napi::{*};
 use std::collections::HashMap;
+use serde_json::Value;
 use scraper::{Html, Selector};
 use kuchiki::traits::*;
 use kuchiki::parse_html;
@@ -22,36 +23,44 @@ pub struct ReplacedUser {
   pub surname: Option<String>,
 }
 
+fn replace_tokens_recursive(content: &str, data: &Value, prefix: &str) -> Result<String> {
+  let mut replaced = content.to_string();
+  
+  if let Value::Object(data_map) = data {
+      for (key, value) in data_map {
+          let full_key = if prefix.is_empty() {
+              key.clone()
+          } else {
+              format!("{}.{}", prefix, key)
+          };
+
+          if let Value::String(value_str) = value {
+              let replacement_pattern = format!(r"\{{\{{\s*{}\s*\}}\}}", regex::escape(&full_key));
+              let re = Regex::new(&replacement_pattern)
+                  .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
+              replaced = re.replace_all(&replaced, value_str.as_str()).to_string();
+          } else if value.is_object() {
+              replaced = replace_tokens_recursive(&replaced, value, &full_key)?;
+          }
+      }
+  }
+  
+  Ok(replaced)
+}
+
 #[napi]
-pub fn replace_handlebars_tokens(buffer: Buffer, user: Option<ReplacedUser>) -> Result<Buffer> {
+pub fn replace_handlebars_tokens(buffer: Buffer, data: Option<Value>) -> Result<Buffer> {
   // Convert buffer to string
-  let html_content = str::from_utf8(&buffer)
-      .map_err(|e| napi::Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
+  let html_content = std::str::from_utf8(&buffer)
+      .map_err(|e| Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
 
-  // Replace {{ user.name }} if user is defined
-  let replaced_content = if let Some(user) = user {
-      let mut replaced = html_content.to_string();
-
-      if let Some(name) = user.name {
-          let replacement_pattern_name = r"\{\{\s*user\.name\s*\}\}";
-          let re_name = Regex::new(replacement_pattern_name)
-              .map_err(|e| napi::Error::from_reason(format!("Regex error: {}", e)))?;
-          replaced = re_name.replace_all(&replaced, name.as_str()).to_string();
-      }
-
-      if let Some(surname) = user.surname {
-          let replacement_pattern_surname = r"\{\{\s*user\.surname\s*\}\}";
-          let re_surname = Regex::new(replacement_pattern_surname)
-              .map_err(|e| napi::Error::from_reason(format!("Regex error: {}", e)))?;
-          replaced = re_surname.replace_all(&replaced, surname.as_str()).to_string();
-      }
-
-      replaced
+  // Replace handlebars tokens if data is defined
+  let replaced_content = if let Some(data) = data {
+      replace_tokens_recursive(html_content, &data, "")?
   } else {
       html_content.to_string()
   };
 
-  // Convert replaced content back to bytes and create a new Buffer
   let replaced_bytes = replaced_content.into_bytes();
   let modified_buffer = Buffer::from(replaced_bytes);
 
