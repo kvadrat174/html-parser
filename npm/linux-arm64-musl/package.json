@@ -1,6 +1,6 @@
 {
   "name": "@kvadrat74/html-parser-linux-arm64-musl",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "os": [
     "linux"
   ],
