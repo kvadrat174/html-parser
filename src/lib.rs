@@ -23,48 +23,74 @@ pub struct ReplacedUser {
   pub surname: Option<String>,
 }
 
-fn replace_tokens_recursive(content: &str, data: &Value, prefix: &str) -> Result<String> {
-  let mut replaced = content.to_string();
-  
-  if let Value::Object(data_map) = data {
-      for (key, value) in data_map {
-          let full_key = if prefix.is_empty() {
-              key.clone()
-          } else {
-              format!("{}.{}", prefix, key)
-          };
+fn find_tokens_recursive(content: &str, data: &Value, prefix: &str, mut tokens_to_replace: Vec<String>) -> Result<Vec<String>, String> {
+    // Проверяем, является ли data объектом
+    if let Value::Object(data_map) = data {
+        for (key, value) in data_map {
+            // Формируем полный ключ
+            let full_key = if prefix.is_empty() {
+                key.clone()
+            } else {
+                format!("{}.{}", prefix, key)
+            };
 
-          if let Value::String(value_str) = value {
-              let replacement_pattern = format!(r"\{{\{{\s*{}\s*\}}\}}", regex::escape(&full_key));
-              let re = Regex::new(&replacement_pattern)
-                  .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
-              replaced = re.replace_all(&replaced, value_str.as_str()).to_string();
-          } else if value.is_object() {
-              replaced = replace_tokens_recursive(&replaced, value, &full_key)?;
-          }
-      }
-  }
-  
-  Ok(replaced)
+            // Если значение объекта - другой объект, рекурсивно проходим по нему
+            if value.is_object() {
+                tokens_to_replace = find_tokens_recursive(content, value, &full_key, tokens_to_replace)?;
+            } else {
+                // Если значение - примитивное, добавляем полный ключ в список
+                tokens_to_replace.push(full_key);
+            }
+        }
+    }
+
+    Ok(tokens_to_replace)
 }
 
-#[napi]
+fn replace_tokens_recursive(content: &str, data: &Value, tokens_to_replace: Vec<String>) -> Result<String> {
+    let mut replaced = content.to_string();
+
+    let token_pattern = Regex::new(r"\{\{\s*([^\}]+)\s*\}\}")
+        .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
+
+    // Заменить токены
+    replaced = token_pattern
+        .replace_all(&replaced, |caps: &regex::Captures| {
+            let token = caps.get(1).map_or("", |m| m.as_str().trim());
+            if tokens_to_replace.contains(&token.to_string()) {
+                // Если токен найден, возвращаем значение
+                data.pointer(&format!("/{}", token.replace('.', "/")))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .to_string()
+            } else {
+                // Если токен не найден, заменяем на пустую строку
+                "".to_string()
+            }
+        })
+        .to_string();
+
+    Ok(replaced)
+}
+
+#[napi(ts_args_type = "buffer: Buffer, data: Record<string, unknown>")]
 pub fn replace_handlebars_tokens(buffer: Buffer, data: Option<Value>) -> Result<Buffer> {
-  // Convert buffer to string
-  let html_content = std::str::from_utf8(&buffer)
-      .map_err(|e| Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
+    let html_content = std::str::from_utf8(&buffer)
+        .map_err(|e| Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
 
-  // Replace handlebars tokens if data is defined
-  let replaced_content = if let Some(data) = data {
-      replace_tokens_recursive(html_content, &data, "")?
-  } else {
-      html_content.to_string()
-  };
+    let replaced_content = if let Some(data) = data {
+        let find_tokens_recursive = find_tokens_recursive(html_content, &data, "", Vec::new()).unwrap();
+        replace_tokens_recursive(html_content, &data, find_tokens_recursive)?
+    } else {
+        let token_pattern = Regex::new(r"\{\{\s*([^\}]+)\s*\}\}")
+            .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
+        token_pattern.replace_all(html_content, "").to_string()
+    };
 
-  let replaced_bytes = replaced_content.into_bytes();
-  let modified_buffer = Buffer::from(replaced_bytes);
+    let replaced_bytes = replaced_content.into_bytes();
+    let modified_buffer = Buffer::from(replaced_bytes);
 
-  Ok(modified_buffer)
+    Ok(modified_buffer)
 }
 
 #[napi]
