@@ -73,7 +73,7 @@ fn replace_tokens_recursive(content: &str, data: &Value, tokens_to_replace: Vec<
                 // Если токен найден, возвращаем значение
                 data.pointer(&format!("/{}", token.replace('.', "/")))
                     .and_then(|v| v.as_str())
-                    .unwrap_or("")
+                    .unwrap_or("__TO_REMOVE__")
                     .to_string()
             } else {
                 "__TO_REMOVE__".to_string()
