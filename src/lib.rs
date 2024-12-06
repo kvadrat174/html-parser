@@ -69,9 +69,8 @@ fn replace_tokens_recursive(content: &str, data: &Value, tokens_to_replace: Vec<
     replaced = token_pattern
         .replace_all(&replaced, |caps: &regex::Captures| {
             let token = caps.get(1).map_or("", |m| m.as_str().trim());
-
             if tokens_to_replace.contains(&token.to_string()) {
-
+                // Если токен найден, возвращаем значение
                 data.pointer(&format!("/{}", token.replace('.', "/")))
                     .and_then(|v| v.as_str())
                     .unwrap_or("")
@@ -96,7 +95,6 @@ pub fn replace_handlebars_tokens(buffer: Buffer, data: Option<Value>) -> Result<
     // Replace handlebars tokens if data is defined
     let replaced_content = if let Some(data) = data {
         let find_tokens_recursive = find_tokens_recursive(html_content, &data, "", Vec::new()).unwrap();
-
         replace_tokens_recursive(html_content, &data, find_tokens_recursive)?
     } else {
         // Если данных нет, просто удаляем все шаблоны
