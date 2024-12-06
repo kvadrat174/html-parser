@@ -47,47 +47,66 @@ fn find_tokens_recursive(content: &str, data: &Value, prefix: &str, mut tokens_t
     Ok(tokens_to_replace)
 }
 
+fn cleanup_template(template: &str) -> String {
+    // Убираем запятые с пробелами между ними
+    let re1 = Regex::new(r",\s*,").unwrap();
+    let result = re1.replace_all(template, ",");
+
+    // Убираем пробелы перед запятыми
+    let re2 = Regex::new(r"(\s,)+").unwrap();
+    let result = re2.replace_all(&result, ",");
+    let re_cleanup = Regex::new(r"(__TO_REMOVE__)").unwrap();
+    re_cleanup.replace_all(&result, "").to_string()
+
+}
+
 fn replace_tokens_recursive(content: &str, data: &Value, tokens_to_replace: Vec<String>) -> Result<String> {
     let mut replaced = content.to_string();
 
     let token_pattern = Regex::new(r"\{\{\s*([^\}]+)\s*\}\}")
         .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
 
-    // Заменить токены
     replaced = token_pattern
         .replace_all(&replaced, |caps: &regex::Captures| {
             let token = caps.get(1).map_or("", |m| m.as_str().trim());
+
             if tokens_to_replace.contains(&token.to_string()) {
-                // Если токен найден, возвращаем значение
+
                 data.pointer(&format!("/{}", token.replace('.', "/")))
                     .and_then(|v| v.as_str())
                     .unwrap_or("")
                     .to_string()
             } else {
-                // Если токен не найден, заменяем на пустую строку
-                "".to_string()
+                "__TO_REMOVE__".to_string()
             }
         })
         .to_string();
 
+    let re_cleanup = Regex::new(r"(\s*,\s*__TO_REMOVE__|__TO_REMOVE__\s*,\s*)").unwrap();
+    replaced = re_cleanup.replace_all(&replaced, "").to_string();
+
     Ok(replaced)
 }
+
 
 #[napi(ts_args_type = "buffer: Buffer, data: Record<string, unknown>")]
 pub fn replace_handlebars_tokens(buffer: Buffer, data: Option<Value>) -> Result<Buffer> {
     let html_content = std::str::from_utf8(&buffer)
         .map_err(|e| Error::from_reason(format!("Failed to convert buffer to string: {}", e)))?;
-
+    // Replace handlebars tokens if data is defined
     let replaced_content = if let Some(data) = data {
         let find_tokens_recursive = find_tokens_recursive(html_content, &data, "", Vec::new()).unwrap();
+
         replace_tokens_recursive(html_content, &data, find_tokens_recursive)?
     } else {
+        // Если данных нет, просто удаляем все шаблоны
         let token_pattern = Regex::new(r"\{\{\s*([^\}]+)\s*\}\}")
             .map_err(|e| Error::from_reason(format!("Regex error: {}", e)))?;
         token_pattern.replace_all(html_content, "").to_string()
     };
+    let replaced_and_cleaned_content = cleanup_template(&replaced_content);
 
-    let replaced_bytes = replaced_content.into_bytes();
+    let replaced_bytes = replaced_and_cleaned_content.into_bytes();
     let modified_buffer = Buffer::from(replaced_bytes);
 
     Ok(modified_buffer)
