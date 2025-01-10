@@ -211,7 +211,7 @@ pub fn add_pre_header_and_links(
 
     // Add tracking link
     let tracking_link = format!(
-        "<img src=\"{}\" alt style=\"display:block;border:0;outline:none;text-decoration:none;\" width=\"1\" height=\"1\">",
+        "<img src=\"{}\" alt style=\"display:block;border:0;outline:none;text-decoration:none;\" width=\"1\" height=\"1\" loading=\"lazy\">",
         open_link
     );
     let tracking_node = parse_html().one(tracking_link).select_first("img").unwrap();
